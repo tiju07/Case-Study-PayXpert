@@ -31,10 +31,10 @@ namespace PayXpert.dao
         {
 
             List<string> genders = new List<string>() { "Male", "Female", "Others" };
+            
+            if (!Regex.IsMatch(firstName, "^[a-zA-Z]+$")) { throw new InvalidInputException("Invalid First Name!");}
 
-            if (!Regex.IsMatch(firstName, "([a-zA-Z])")) { throw new InvalidInputException("Invalid First Name!");}
-
-            if (!Regex.IsMatch(lastName, "([a-zA-Z])")) { throw new InvalidInputException("Invalid Lase Name!"); }
+            if (!Regex.IsMatch(lastName, "^[a-zA-Z]+$")) { throw new InvalidInputException("Invalid Last Name!"); }
 
             if (!genders.Contains(Gender)) { throw new InvalidInputException("Invalid Gender!");}
 
@@ -64,9 +64,9 @@ namespace PayXpert.dao
         /// <returns></returns>
         public static bool UpdateEmployeeValidation(string? firstName, string? lastName, DateTime? DateOfBirth, string? Gender, string? Email, string? PhoneNumber, string? Address, string? Designation, DateTime? JoiningDate, DateTime? TerminationDate)
         {
-            if (firstName != null && !Regex.IsMatch(firstName, "([a-zA-Z])")) { throw new InvalidInputException("Invalid First Name!"); }
+            if (firstName != null && (Regex.IsMatch(firstName, "([a-zA-Z])") && Regex.IsMatch(firstName, "([0-9])"))) { throw new InvalidInputException("Invalid First Name!"); }
 
-            if (lastName != null && !Regex.IsMatch(lastName, "([a-zA-Z])")) { throw new InvalidInputException("Invalid Lase Name!"); }
+            if (lastName != null && (Regex.IsMatch(lastName, "([a-zA-Z])") && Regex.IsMatch(lastName, "([0-9])"))) { throw new InvalidInputException("Invalid Lase Name!"); }
 
             if (Gender != null && !genders.Contains(Gender)) { throw new InvalidInputException("Invalid Gender!"); }
 
@@ -77,7 +77,6 @@ namespace PayXpert.dao
             if (Address != null && Address.Length < 3) { throw new InvalidInputException("Invalid Address!"); }
 
             if (Designation != null && Designation.Length < 3) { throw new InvalidInputException("Invalid Designation!"); }
-            //For the DateOnly variables, the validation will depend on how input is taken.
 
             return true;
         }

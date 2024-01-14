@@ -1,10 +1,4 @@
-﻿    using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PayXpert.entity
+﻿namespace PayXpert.entity
 {
     internal class Tax
     {
@@ -18,6 +12,16 @@ namespace PayXpert.entity
         public int EmployeeID { get => employeeID; set { employeeID = value; } }
         public int TaxYear { get => taxYear; set { taxYear = value; } }
         public double TaxableIncome { get => taxableIncome; set { taxableIncome = value; } }
-        public double TaxAmount { get => taxAmount; private set { taxAmount = value; } }
+        public double TaxAmount { get => taxAmount; set { taxAmount = value; } }
+
+        public Tax() { }
+
+        public Tax(int employeeID, int taxYear, double taxableIncome, double taxAmount)
+        {
+            EmployeeID = employeeID;
+            TaxYear = taxYear;
+            TaxableIncome = taxableIncome;
+            TaxAmount = taxAmount;
+        }
     }
 }

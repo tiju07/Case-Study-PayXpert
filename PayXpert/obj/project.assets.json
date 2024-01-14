@@ -643,11 +643,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Asus\\Desktop\\Hexaware Training\\Technical Training\\Assignments\\C# Solutions\\PayXpert\\PayXpert.csproj",
+      "projectUniqueName": "C:\\Users\\Asus\\Desktop\\Hexaware Training\\Technical Training\\Assignments\\C# Solutions\\PayExpert-Case-Study\\PayXpert\\PayXpert.csproj",
       "projectName": "PayXpert",
-      "projectPath": "C:\\Users\\Asus\\Desktop\\Hexaware Training\\Technical Training\\Assignments\\C# Solutions\\PayXpert\\PayXpert.csproj",
+      "projectPath": "C:\\Users\\Asus\\Desktop\\Hexaware Training\\Technical Training\\Assignments\\C# Solutions\\PayExpert-Case-Study\\PayXpert\\PayXpert.csproj",
       "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Asus\\Desktop\\Hexaware Training\\Technical Training\\Assignments\\C# Solutions\\PayXpert\\obj\\",
+      "outputPath": "C:\\Users\\Asus\\Desktop\\Hexaware Training\\Technical Training\\Assignments\\C# Solutions\\PayExpert-Case-Study\\PayXpert\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",

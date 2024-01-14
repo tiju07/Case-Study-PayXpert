@@ -25,7 +25,6 @@ namespace PayXpert.dao
                 string dob = dateOfBirth.Year.ToString() + "-" + dateOfBirth.Month.ToString() + "-" + dateOfBirth.Day.ToString();
                 string jd = joiningDate.Year.ToString() + "-" + joiningDate.Month.ToString() + "-" + joiningDate.Day.ToString();
 
-
                 var q = "INSERT INTO Employee values (@FirstName, @LastName, @DateOfBirth, @Gender, @Email, @PhoneNumber, @Address, @Designation, @JoiningDate, @TerminationDate)";
                 cmd = new SqlCommand(q, conn);
 
@@ -152,7 +151,6 @@ namespace PayXpert.dao
                 {
                     jd = joiningDate.Value.Year.ToString() + "-" + joiningDate.Value.Month.ToString() + "-" + joiningDate.Value.Day.ToString();
                 }
-
                 string q = $"UPDATE Employee SET {(firstName != null ? "FirstName=@FirstName," : "")} {(lastName != null ? "LastName=@LastName," : "")} {(dob != null ? "DateOfBirth=@DOB," : "")} {(gender != null ? "Gender=@Gender," : "")} {(email != null ? "Email=@Email," : "")} {(phoneNumber != null ? "PhoneNumber=@PhoneNumber, " : "")} {(address != null ? "Address=@Address, " : "")}{(designation != null ? "Designation=@Designation," : "")} {(jd != null ? "JoiningDate=@JoiningDate," : "")} {(terminationDate != null ? "TerminationDate=@TerminationDate" : "")} WHERE EmployeeID=@EmployeeID";
                 if (!q.Contains("TerminationDate"))
                 {
@@ -166,6 +164,7 @@ namespace PayXpert.dao
                     q = new string(q.ToCharArray().Reverse().ToArray());
                     Console.WriteLine(q);
                 }
+                Console.WriteLine(q);
 
                 DatabaseContext.GetDataFromDB($"SELECT * FROM Employee WHERE EmployeeID = {employeeID}", conn, "", false);
 
@@ -224,7 +223,7 @@ namespace PayXpert.dao
                 dr = cmd.ExecuteReader();
                 if (dr.HasRows)
                 {
-                    Employee emp = null;
+                    Employee emp = new Employee();
                     while (dr.Read())
                     {
                         emp = new Employee((int)dr[0], (string)dr[1], (string)dr[2], DateTime.Parse(dr[3].ToString()), (string)dr[4], (string)dr[5], (string)dr[6], (string)dr[7], (string)dr[8], DateTime.Parse(dr[9].ToString()), DateTime.Parse(dr[10].ToString()));

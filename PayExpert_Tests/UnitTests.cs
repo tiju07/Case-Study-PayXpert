@@ -63,7 +63,7 @@ namespace PayExpert_Tests
         [Test]
         public void VerifyErrorHandlingForInvalidEmployeeData()
         {
-            Assert.Throws<Exception>(() => employeeService.AddEmployee("123", "Jackson", new DateTime(2001, 4, 2), "Male", "richardjk@gmail.com", "+919546857413", "P.O. Box 420, 3564 Lacinia Rd.", "Project Lead", new DateTime(2020, 7, 5), null));
+            Assert.Throws<Exception>(() => employeeService.AddEmployee("Richard", "sdfasdf121", new DateTime(2001, 4, 2), "Male", "richardjk@gmail.com", "+919546857413", "P.O. Box 420, 3564 Lacinia Rd.", "Project Lead", new DateTime(2020, 7, 5), null));
         }
     }
 }

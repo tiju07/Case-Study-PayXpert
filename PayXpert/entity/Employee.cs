@@ -1,14 +1,4 @@
-﻿using PayXpert.exception;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Data.SqlTypes;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data;
-
-namespace PayXpert.entity
+﻿namespace PayXpert.entity
 {
     class Employee
     {
@@ -23,7 +13,7 @@ namespace PayXpert.entity
         private string position = null!;
         private DateTime joiningDate;
         private DateTime? terminationDate;
-
+        
         public int EmployeeID { get => employeeID; private set { } }
         public string FirstName { get => firstName; set { firstName = value; } }
         public string LastName { get => lastName; set { lastName = value; } }
@@ -37,6 +27,21 @@ namespace PayXpert.entity
         public DateTime? TerminationDate { get => terminationDate; set { terminationDate = value; } }
 
         public Employee() {}
+
+        public Employee(string firstName, string lastName, DateTime dateOfBirth, string gender, string email, string phoneNumber, string address, string position, DateTime joiningDate, DateTime? terminationDate)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            DateOfBirth = dateOfBirth;
+            Gender = gender;
+            Email = email;
+            PhoneNumber = phoneNumber;
+            Address = address;
+            Position = position;
+            JoiningDate = joiningDate;
+            TerminationDate = terminationDate;
+        }
+
         public Employee(int employeeID, string firstName, string lastName, DateTime dateOfBirth, string gender, string email, string phoneNumber, string address, string position, DateTime joiningDate, DateTime? terminationDate)
         {
             EmployeeID = employeeID;

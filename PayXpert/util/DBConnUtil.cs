@@ -9,7 +9,6 @@ namespace PayXpert.util
         public static SqlConnection ReturnConnectionObject()
         {
             string connString = DBPropertyUtil.GetConnectionString();
-            Console.WriteLine(connString);
             return new SqlConnection(connString);
         }
     }
