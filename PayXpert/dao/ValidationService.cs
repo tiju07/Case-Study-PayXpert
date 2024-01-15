@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using PayXpert.exception;
+using PayXpert.util;
+using System.Data.SqlClient;
 
 namespace PayXpert.dao 
 {
@@ -100,6 +102,19 @@ namespace PayXpert.dao
             if (!recordTypes.Contains(recordType.ToLower())) throw new InvalidInputException("Invalid Record Type!");
 
             return true;
+        }
+    
+        public static bool EmployeeIDIsValid(int employeeID)
+        {
+            try
+            {
+                SqlConnection conn = DBConnUtil.ReturnConnectionObject();
+                conn.Open();
+                string q = $"SELECT * FROM Employee where EmployeeID = {employeeID}";
+                DatabaseContext.GetDataFromDB(q, conn, "", false);
+                return true;
+            }
+            catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); throw new EmployeeNotFoundException(enfex.Message); }
         }
     }
 }

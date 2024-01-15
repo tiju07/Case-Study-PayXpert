@@ -23,32 +23,30 @@ namespace PayXpert.dao
                 conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
-                string q = "SELECT BasicSalary, OvertimePay, Deductions FROM Payroll WHERE EmployeeID = @EmployeeID";
+                string q = "SELECT BasicSalary, OvertimePay, Deductions, PayPeriodStartDate, PayPeriodEndDate FROM Payroll WHERE EmployeeID = @EmployeeID";
                 SqlCommand cmd = new SqlCommand(q, conn);
                 cmd.Parameters.AddWithValue("@EmployeeID", employeeID);
                 SqlDataReader dr = cmd.ExecuteReader();
-                //Console.WriteLine($"Payroll for employee with ID: {employeeID}");
-
-                int months = (endDate - startDate).Days / 30;
 
                 while (dr.Read())
                 {
+                    int payPeriodStartDate = DateTime.Parse(dr.GetValue(3).ToString()).Year;
+                    int payPeriodEndDate = DateTime.Parse(dr.GetValue(4).ToString()).Year;
+                    int months = payPeriodStartDate == payPeriodEndDate ? 1 : (payPeriodEndDate - payPeriodStartDate);
                     decimal totPay = ((decimal)dr.GetValue(0) * months) + (decimal)dr.GetValue(1) - (decimal)dr.GetValue(2);
-                    //Console.WriteLine($"Details: \nBasic Salary: {dr.GetValue(0)} \t Overtime Pay: {dr.GetValue(1)} \t Deductions: {dr.GetValue(2)}");
-                    //Console.WriteLine($"Total Pay: {totPay}");
+
                     payrollDetails.Add((decimal)dr.GetValue(0));
                     payrollDetails.Add((decimal)dr.GetValue(1));
                     payrollDetails.Add((decimal)dr.GetValue(2));
                     payrollDetails.Add(totPay);
-                    Console.WriteLine($"4th element of list: {payrollDetails[3]}");
                     return payrollDetails;
                 }
                 dr.Close();
                 return payrollDetails;
             }
             catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); throw new Exception(pgex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); throw new Exception(ex.Message); }
+            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             finally { conn.Close(); }
             return payrollDetails;
         }
@@ -65,8 +63,8 @@ namespace PayXpert.dao
                 DatabaseContext.GetDataFromDB(q, conn, $"Following are the payroll details for ID: {payrollID}", true);
             }
             catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); throw new Exception(pgex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); throw new Exception(ex.Message); }
+            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             finally { conn.Close(); }
         }
 
@@ -82,9 +80,9 @@ namespace PayXpert.dao
                 DatabaseContext.GetDataFromDB(q, conn, $"Following are the payrolls for the employee with ID: {employeeID}", true);
             }
             catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); throw new Exception(pgex.Message); }
-            catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); throw new Exception(enfex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); throw new Exception(ex.Message); }
+            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); }
+            catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             finally { conn.Close(); }
         }
 
@@ -103,8 +101,8 @@ namespace PayXpert.dao
                 DatabaseContext.GetDataFromDB(q, conn, $"Following are the payrolls between {sd} and {ed}", true);
             }
             catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); throw new Exception(pgex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); throw new Exception(ex.Message); }
+            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             finally { conn.Close(); }
         }
 
@@ -113,6 +111,7 @@ namespace PayXpert.dao
             SqlConnection conn = null!;
             SqlCommand cmd;
             SqlDataReader dr = null!;
+            decimal basicPay = 0, overtimePay = 0;
             try
             {
                 conn = DBConnUtil.ReturnConnectionObject();
@@ -125,13 +124,13 @@ namespace PayXpert.dao
                     throw new EmployeeNotFoundException("Could not get payroll details for the specified employee!");
                 }
                 dr.Read();
-                decimal basicPay = (decimal)dr[0];
-                decimal overtimePay = (decimal)dr[1];
-                return (basicPay * 12) + overtimePay;
+                basicPay = (decimal)dr[0];
+                overtimePay = (decimal)dr[1];
             }
-            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); throw new Exception(); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); throw new Exception(); }
+            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             finally { conn.Close(); dr.Close(); }
+            return (basicPay * 12) + overtimePay;
         }
 
         public decimal NetSalaryAfterDeductions(int employeeID)
@@ -139,7 +138,7 @@ namespace PayXpert.dao
             SqlConnection conn = null!;
             SqlCommand cmd;
             SqlDataReader dr = null!;
-
+            decimal netSalary=0, taxAmount=0;
             try
             {
                 conn = DBConnUtil.ReturnConnectionObject();
@@ -152,13 +151,13 @@ namespace PayXpert.dao
                     throw new EmployeeNotFoundException("Could not get payroll details for the specified employee!");
                 }
                 dr.Read();
-                decimal netSalary = (decimal)dr[0];
-                decimal taxAmount = (decimal)dr[1];
-                return (netSalary * 12) - taxAmount;
+                netSalary = (decimal)dr[0];
+                taxAmount = (decimal)dr[1];
             }
-            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); throw new Exception(); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); throw new Exception(); }
+            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             finally { conn.Close(); dr.Close(); }
-        } 
+            return (netSalary * 12) - taxAmount;
+        }
     }
 }

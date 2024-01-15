@@ -37,10 +37,10 @@ namespace PayXpert.dao
                     dr.Close();
                 }
             }
-            catch (TaxCalculationException tcex) { Console.WriteLine(tcex.Message); throw new TaxCalculationException(tcex.Message); }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); throw new Exception(dbcex.Message); }
-            catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); throw new Exception(iiex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); throw new Exception(ex.Message); }
+            catch (TaxCalculationException tcex) { Console.WriteLine(tcex.Message); }
+            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+            catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             finally { conn.Close(); }
         }
 
@@ -55,21 +55,22 @@ namespace PayXpert.dao
                 string q = $"SELECT TaxAmount FROM Tax WHERE TaxID={taxId}";
                 SqlCommand cmd = new SqlCommand(q, conn);
                 SqlDataReader dr = cmd.ExecuteReader();
+                if(!dr.HasRows) { throw new TaxCalculationException("Could not find tax details for the given ID!"); }
                 while (dr.Read())
                 {
                     Console.WriteLine($"TaxAmount for Tax ID \"{taxId}\" is {string.Format(new CultureInfo("en-US"), "{0:C}", dr.GetValue(0))}");
                 }
                 dr.Close();
             }
-            catch (TaxCalculationException tcex) { Console.WriteLine(tcex.Message); throw new TaxCalculationException(tcex.Message); }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); throw new Exception(dbcex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); throw new Exception(ex.Message); }
+            catch (TaxCalculationException tcex) { Console.WriteLine(tcex.Message); }
+            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             finally { conn.Close(); }
         }
 
         public decimal GetTaxesForEmployee(int employeeId)
         {
-            decimal tax;
+            decimal tax = 0;
             SqlConnection conn = null!;
             try
             {
@@ -84,9 +85,9 @@ namespace PayXpert.dao
                 tax = (decimal)reader[0];
                 reader.Close();
             }
-            catch (TaxCalculationException tcex) { Console.WriteLine(tcex.Message); throw new Exception(tcex.Message); }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); throw new Exception(dbcex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); throw new Exception(ex.Message); }
+            catch (TaxCalculationException tcex) { Console.WriteLine(tcex.Message); }
+            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             finally { conn.Close(); }
             return tax;
         }
@@ -102,9 +103,9 @@ namespace PayXpert.dao
                 string q = $"SELECT * FROM Tax WHERE TaxYear={taxYear}";
                 DatabaseContext.GetDataFromDB(q, conn, $"Tax Information for the year: {taxYear}", true);
             }
-            catch (TaxCalculationException tcex) { Console.WriteLine(tcex.Message); throw new TaxCalculationException(tcex.Message); }
+            catch (TaxCalculationException tcex) { Console.WriteLine(tcex.Message); }
             catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); throw new Exception(ex.Message); }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             finally { conn.Close(); }
         }
     }

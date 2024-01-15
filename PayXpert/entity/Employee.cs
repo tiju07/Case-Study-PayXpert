@@ -28,20 +28,6 @@
 
         public Employee() {}
 
-        public Employee(string firstName, string lastName, DateTime dateOfBirth, string gender, string email, string phoneNumber, string address, string position, DateTime joiningDate, DateTime? terminationDate)
-        {
-            FirstName = firstName;
-            LastName = lastName;
-            DateOfBirth = dateOfBirth;
-            Gender = gender;
-            Email = email;
-            PhoneNumber = phoneNumber;
-            Address = address;
-            Position = position;
-            JoiningDate = joiningDate;
-            TerminationDate = terminationDate;
-        }
-
         public Employee(int employeeID, string firstName, string lastName, DateTime dateOfBirth, string gender, string email, string phoneNumber, string address, string position, DateTime joiningDate, DateTime? terminationDate)
         {
             EmployeeID = employeeID;
@@ -56,6 +42,21 @@
             JoiningDate = joiningDate;
             TerminationDate = terminationDate;
         }
+
+        public Employee(string firstName, string lastName, DateTime dateOfBirth, string gender, string email, string phoneNumber, string address, string position, DateTime joiningDate, DateTime? terminationDate)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            DateOfBirth = dateOfBirth;
+            Gender = gender;
+            Email = email;
+            PhoneNumber = phoneNumber;
+            Address = address;
+            Position = position;
+            JoiningDate = joiningDate;
+            TerminationDate = terminationDate;
+        }
+
 
         public void CalculateAge()
         {

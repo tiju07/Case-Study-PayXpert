@@ -54,7 +54,7 @@ namespace PayXpert.dao
             catch (InvalidInputException iiex)
             {
                 Console.WriteLine(iiex.Message);
-                throw new Exception(iiex.Message);
+                throw new InvalidInputException(iiex.Message);
             }
             catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
             catch (Exception ex)
@@ -154,18 +154,13 @@ namespace PayXpert.dao
                 string q = $"UPDATE Employee SET {(firstName != null ? "FirstName=@FirstName," : "")} {(lastName != null ? "LastName=@LastName," : "")} {(dob != null ? "DateOfBirth=@DOB," : "")} {(gender != null ? "Gender=@Gender," : "")} {(email != null ? "Email=@Email," : "")} {(phoneNumber != null ? "PhoneNumber=@PhoneNumber, " : "")} {(address != null ? "Address=@Address, " : "")}{(designation != null ? "Designation=@Designation," : "")} {(jd != null ? "JoiningDate=@JoiningDate," : "")} {(terminationDate != null ? "TerminationDate=@TerminationDate" : "")} WHERE EmployeeID=@EmployeeID";
                 if (!q.Contains("TerminationDate"))
                 {
-                    Console.WriteLine(q);
                     q = new string(q.ToCharArray().Reverse().ToArray());
-                    Console.WriteLine(q);
                     int temp = q.IndexOf(',');
-                    Console.WriteLine(q);
                     q = q.Remove(temp, 1);
-                    Console.WriteLine(q);
                     q = new string(q.ToCharArray().Reverse().ToArray());
-                    Console.WriteLine(q);
                 }
-                Console.WriteLine(q);
 
+                //To get to know if the employee exists or not in the database before updating it -> throws EmployeeNotFoundException
                 DatabaseContext.GetDataFromDB($"SELECT * FROM Employee WHERE EmployeeID = {employeeID}", conn, "", false);
 
                 cmd = new SqlCommand(q, conn);
@@ -181,7 +176,8 @@ namespace PayXpert.dao
                 if (address != null) cmd.Parameters.AddWithValue("@Address", address);
                 if (designation != null) cmd.Parameters.AddWithValue("@Designation", designation);
                 if (jd != null) cmd.Parameters.AddWithValue("@JoiningDate", jd);
-                if (terminationDate != null)
+                if(terminationDate == DateTime.MinValue) { cmd.Parameters.AddWithValue("@TerminationDate", DBNull.Value); }
+                else if (terminationDate != null)
                 {
                     cmd.Parameters.AddWithValue("@TerminationDate", terminationDate.Value.Year.ToString() + "-" + terminationDate.Value.Month.ToString() + "-" + terminationDate.Value.Day.ToString());
                 }
@@ -194,7 +190,7 @@ namespace PayXpert.dao
             catch (InvalidInputException iiex)
             {
                 Console.WriteLine(iiex.Message);
-                throw new Exception(iiex.Message);
+                throw new InvalidInputException(iiex.Message);
             }
             catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
             catch (EmployeeNotFoundException enfex)
@@ -223,7 +219,7 @@ namespace PayXpert.dao
                 dr = cmd.ExecuteReader();
                 if (dr.HasRows)
                 {
-                    Employee emp = new Employee();
+                    Employee emp = null;
                     while (dr.Read())
                     {
                         emp = new Employee((int)dr[0], (string)dr[1], (string)dr[2], DateTime.Parse(dr[3].ToString()), (string)dr[4], (string)dr[5], (string)dr[6], (string)dr[7], (string)dr[8], DateTime.Parse(dr[9].ToString()), DateTime.Parse(dr[10].ToString()));
@@ -238,12 +234,10 @@ namespace PayXpert.dao
             catch (EmployeeNotFoundException enfex)
             {
                 Console.WriteLine(enfex.Message);
-                throw new Exception(enfex.Message);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                throw new Exception(ex.Message);
             }
             finally
             {

@@ -25,7 +25,8 @@ namespace PayXpert.dao
                 //bool validationResul;
                 
                 ValidationService.AddFinancialRecordValidation(recordDate, description, amount, recordType);
-                
+
+                DatabaseContext.GetDataFromDB($"SELECT * FROM Employee WHERE EmployeeID = {employeeId}", conn, "", false);
                 //if (!validationResult) { throw new InvalidInputException("At least one of your inputs was incorrect. Check your data and try again!"); }
 
                 string q = "INSERT INTO FinancialRecord(EmployeeID, RecordDate, Description, Amount, RecordType) VALUES (@EmployeeID, @RecordDate, @Description, @Amount, @RecordType)";
@@ -40,10 +41,10 @@ namespace PayXpert.dao
                 if (rowsAffected > 0) { Console.WriteLine("Record added successfully!"); }
                 else { throw new FinancialRecordException("Error adding record!!"); }
             }
-            catch (FinancialRecordException frex) { Console.WriteLine(frex.Message); throw new Exception(frex.Message); }
-            catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); throw new Exception(iiex.Message); }
+            catch (FinancialRecordException frex) { Console.WriteLine(frex.Message); }
+            catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); }
             catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.ToString()); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); throw new Exception(ex.Message); }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             finally { conn.Close(); }
         }
 
@@ -59,7 +60,7 @@ namespace PayXpert.dao
                 DatabaseContext.GetDataFromDB(q, conn, $"Following are the financial records with ID: {recordId}", true);
             }
             catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message);  }
-            catch (Exception ex) { Console.WriteLine(ex.Message); throw new Exception(ex.Message); }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             finally { conn.Close(); }
         }
 
@@ -76,9 +77,9 @@ namespace PayXpert.dao
                 DatabaseContext.GetDataFromDB(q, conn, $"Following are the financial records for the year {recordDate}", true);
             }
             catch (FinancialRecordException frex) { Console.WriteLine(frex.Message); throw new FinancialRecordException(frex.Message); }
-            catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); throw new Exception(iiex.Message); }
+            catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); }
             catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); throw new Exception(ex.Message); }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             finally { conn.Close(); }
         }
 
@@ -94,8 +95,8 @@ namespace PayXpert.dao
                 DatabaseContext.GetDataFromDB(q, conn, $"Following are the financial records for the employee with ID: {employeeId}", true);
             }
             catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (FinancialRecordException frex) { Console.WriteLine(frex.Message); throw new Exception(frex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); throw new Exception(ex.Message); }
+            catch (FinancialRecordException frex) { Console.WriteLine(frex.Message); }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             finally { conn.Close(); }
         }
     }

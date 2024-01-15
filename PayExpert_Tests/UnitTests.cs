@@ -16,24 +16,17 @@ namespace PayExpert_Tests
             taxService = new TaxService();
 
         }
-        /*
-        [Test]
-        public void CheckConfigFile()
-        {
-            Assert.AreEqual("SERVER=LAPTOP-TMML8LN7;DATABASE=PayExpert;Trusted_Connection=True", ConfigurationSettings.AppSettings["DefaultConnection"]);
-            Console.WriteLine(ConfigurationSettings.AppSettings["DefaultConnection"]);
-        }
-        */
+
         [Test]
         public void CalculateGrossSalaryForEmployee()
         {
-            Assert.That(payrollService.GrossSalaryCalculator(1), Is.EqualTo(321125m));
+            Assert.AreEqual(payrollService.GrossSalaryCalculator(1), 321125m);
         }
 
         [Test]
         public void CalculateNetSalaryAfterDeductions()
         {
-            Assert.That(payrollService.NetSalaryAfterDeductions(1), Is.EqualTo(281663m));
+            Assert.AreEqual(payrollService.NetSalaryAfterDeductions(1), 281663m);
         }
 
         [TestCase(1, 92233)]
@@ -43,27 +36,30 @@ namespace PayExpert_Tests
         [TestCase(21, 92233.0d)]
         public void VerifyTaxCalculationForHighIncomeEmployee(int ID, decimal expected)
         {
-            Assert.That((double)taxService.GetTaxesForEmployee(ID), Is.EqualTo((double)expected));
+            Assert.AreEqual((double)taxService.GetTaxesForEmployee(ID), (double)expected);
         }
 
         DateTime startDate = new DateTime(2022, 5, 12);
         DateTime endDate = new DateTime(2023, 8, 1);
-        [TestCase(1, (double)370874)]
-        [TestCase(17, (double)1349683)]
-        [TestCase(9, (double)1274439m)]
-        [TestCase(29, (double)1010939)]
-        [TestCase(21, (double)703683)]
-        public void ProcessPayrollForMultipleEmployees(int ID, decimal expected)
+        [TestCase(1, 31158.0d)]
+        [TestCase(17, 103204.0d)]
+        [TestCase(9, 186591.0d)]
+        [TestCase(29, 143963.0d)]
+        [TestCase(21, 157830.0d)]
+        public void ProcessPayrollForMultipleEmployees(int ID, double expected)
         {
             List<decimal> lst = payrollService.GeneratePayroll(ID, startDate, endDate);
             Console.WriteLine(lst[3]);
-            Assert.That(lst[3], Is.EqualTo((decimal)expected));
+            Assert.AreEqual((double)lst[3], expected);
         }
 
         [Test]
         public void VerifyErrorHandlingForInvalidEmployeeData()
         {
-            Assert.Throws<Exception>(() => employeeService.AddEmployee("Richard", "sdfasdf121", new DateTime(2001, 4, 2), "Male", "richardjk@gmail.com", "+919546857413", "P.O. Box 420, 3564 Lacinia Rd.", "Project Lead", new DateTime(2020, 7, 5), null));
+            Assert.Throws<InvalidInputException>(() => employeeService.AddEmployee("Richard", "sdfasdf121", new DateTime(2001, 4, 2), "Male", "richardjk@gmail.com", "+919546857413", "P.O. Box 420, 3564 Lacinia Rd.", "Project Lead", new DateTime(2020, 7, 5), null));
+
+            Assert.Throws<InvalidInputException>(() => employeeService.UpdateEmployee(2010, "Richard", "Houston", new DateTime(2001, 4, 2), "Male", "richardjk@gmail.", "+919546857413", "P.O. Box 420, 3564 Lacinia Rd.", "Project Lead", new DateTime(2020, 7, 5), null));
         }
+
     }
 }
