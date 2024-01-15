@@ -22,7 +22,7 @@ namespace PayXpert.dao
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
 
                 //bool validationResul;
-
+                ValidationService.EmployeeIDIsValid(employeeId);
                 ValidationService.AddFinancialRecordValidation(recordDate, description, amount, recordType);
 
                 DatabaseContext.GetDataFromDB($"SELECT * FROM Employee WHERE EmployeeID = {employeeId}", conn, "", false);

@@ -7,6 +7,7 @@ namespace PayExpert_Tests
         private PayrollService payrollService;
         private EmployeeService employeeService;
         private TaxService taxService;
+        private FinancialRecordService financialRecordService;
         [SetUp]
         public void SetUp()
         {
@@ -14,6 +15,7 @@ namespace PayExpert_Tests
             payrollService = new PayrollService();
             employeeService = new EmployeeService();
             taxService = new TaxService();
+            financialRecordService = new FinancialRecordService();
 
         }
 
@@ -63,6 +65,8 @@ namespace PayExpert_Tests
             Assert.Throws<InvalidInputException>(() => employeeService.AddEmployee("Richard", "sdfasdf121", new DateTime(2001, 4, 2), "Male", "richardjk@gmail.com", "+919546857413", "P.O. Box 420, 3564 Lacinia Rd.", "Project Lead", new DateTime(2020, 7, 5), null));
 
             Assert.Throws<InvalidInputException>(() => employeeService.UpdateEmployee(2010, "Richard", "Houston", new DateTime(2001, 4, 2), "Male", "richardjk@gmail.", "+919546857413", "P.O. Box 420, 3564 Lacinia Rd.", "Project Lead", new DateTime(2020, 7, 5), null));
+
+            Assert.Throws<EmployeeNotFoundException>(() => financialRecordService.AddFinancialRecord(1000, 2023, "Desc", 5412, "Income"));
         }
 
     }

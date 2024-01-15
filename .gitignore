@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/PayExpert_Tests/.vs
+/PayXpert/.vs
+/PayExpert_Tests/bin
+/PayExpert_Tests/obj
+/PayXpert/bin
+/PayXpert/obj
