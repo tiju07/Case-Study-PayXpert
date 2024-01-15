@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PayXpert_Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+66d3cc2be9ff605ba8d4ff1fa4d5dc5fea105460")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1e26661d20c689ded914c9ee286cec3b22488df1")]
 [assembly: System.Reflection.AssemblyProductAttribute("PayXpert_Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PayXpert_Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
