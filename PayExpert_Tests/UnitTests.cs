@@ -34,9 +34,9 @@ namespace PayExpert_Tests
         [TestCase(8, 141977.0d)]
         [TestCase(9, 45985.0d)]
         [TestCase(21, 92233.0d)]
-        public void VerifyTaxCalculationForHighIncomeEmployee(int ID, decimal expected)
+        public void VerifyTaxCalculationForHighIncomeEmployee(int ID, double expected)
         {
-            Assert.AreEqual((double)taxService.GetTaxesForEmployee(ID), (double)expected);
+            Assert.AreEqual((double)taxService.GetTaxesForEmployee(ID), expected);
         }
 
         DateTime startDate = new DateTime(2022, 5, 12);
