@@ -12,9 +12,8 @@ namespace PayXpert.dao
         SqlDataReader dr = null!;
         public void AddEmployee(string firstName, string lastName, DateTime dateOfBirth, string gender, string email, string phoneNumber, string address, string designation, DateTime joiningDate, DateTime? terminationDate)
         {
-            try
+            using(conn = DBConnUtil.ReturnConnectionObject())
             {
-                conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
 
@@ -49,61 +48,35 @@ namespace PayXpert.dao
                 int rowsUpdated = cmd.ExecuteNonQuery();
                 if (rowsUpdated > 0) { Console.WriteLine("Employee created successfully!"); }
                 else { Console.WriteLine("Error creating employee!"); }
-
-            }
-            catch (InvalidInputException iiex)
-            {
-                Console.WriteLine(iiex.Message);
-                throw new InvalidInputException(iiex.Message);
-            }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw new Exception(ex.Message);
-            }
-            finally
-            {
-                conn.Close();
             }
         }
 
         public void GetAllEmployees()
         {
-            try
+            using(conn = DBConnUtil.ReturnConnectionObject())
             {
-                conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
                 var q = "SELECT * FROM Employee";
                 DatabaseContext.GetDataFromDB(q, conn, "Following is the list of all employees:", true);
             }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); }
-            finally { conn.Close(); }
         }
 
         public void GetEmployeeById(int employeeID)
         {
-            try
+            using(conn = DBConnUtil.ReturnConnectionObject())
             {
-                conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
                 string q = $"SELECT * FROM Employee WHERE EmployeeID = {employeeID}";
                 DatabaseContext.GetDataFromDB(q, conn, $"Following is the details of employee with ID: {employeeID}", true);
             }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); throw new Exception(enfex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); throw new Exception(ex.Message); }
-            finally { conn.Close(); }
         }
 
         public void RemoveEmployee(int employeeID)
         {
-            try
+            using(conn = DBConnUtil.ReturnConnectionObject())
             {
-                conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
                 string q = $"DELETE FROM Employee where EmployeeID = {employeeID}";
@@ -113,27 +86,13 @@ namespace PayXpert.dao
                 if (rowsAffected > 0) { Console.WriteLine("Deleted successfully!"); }
                 else if (rowsAffected == 0) { throw new EmployeeNotFoundException("Could not find any employee with the specific ID!"); }
                 else { Console.WriteLine("Could not delete record!"); }
-
             }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (EmployeeNotFoundException enfex)
-            {
-                Console.WriteLine(enfex.Message);
-                throw new Exception();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw new Exception();
-            }
-            finally { conn.Close(); }
         }
 
         public void UpdateEmployee(int employeeID, string? firstName, string? lastName, DateTime? dateOfBirth, string? gender, string? email, string? phoneNumber, string? address, string? designation, DateTime? joiningDate, DateTime? terminationDate)
         {
-            try
+            using(conn = DBConnUtil.ReturnConnectionObject())
             {
-                conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
 
@@ -176,7 +135,7 @@ namespace PayXpert.dao
                 if (address != null) cmd.Parameters.AddWithValue("@Address", address);
                 if (designation != null) cmd.Parameters.AddWithValue("@Designation", designation);
                 if (jd != null) cmd.Parameters.AddWithValue("@JoiningDate", jd);
-                if(terminationDate == DateTime.MinValue) { cmd.Parameters.AddWithValue("@TerminationDate", DBNull.Value); }
+                if (terminationDate == DateTime.MinValue) { cmd.Parameters.AddWithValue("@TerminationDate", DBNull.Value); }
                 else if (terminationDate != null)
                 {
                     cmd.Parameters.AddWithValue("@TerminationDate", terminationDate.Value.Year.ToString() + "-" + terminationDate.Value.Month.ToString() + "-" + terminationDate.Value.Day.ToString());
@@ -185,33 +144,13 @@ namespace PayXpert.dao
                 int rowsAffected = cmd.ExecuteNonQuery();
                 if (rowsAffected > 0) { Console.WriteLine("Updated employee details successfully!"); }
                 else { Console.WriteLine("Error updating employee details!"); }
-
             }
-            catch (InvalidInputException iiex)
-            {
-                Console.WriteLine(iiex.Message);
-                throw new InvalidInputException(iiex.Message);
-            }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (EmployeeNotFoundException enfex)
-            {
-                Console.WriteLine(enfex.Message);
-                throw new Exception(enfex.Message);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.StackTrace);
-                throw new Exception(ex.Message);
-            }
-            finally { conn.Close(); }
         }
 
         public void CalculateAge(int employeeID)
         {
-
-            try
+            using(conn = DBConnUtil.ReturnConnectionObject())
             {
-                conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) throw new DatabaseConnectionException("Could not connect to the DB!");
                 string q = $"SELECT * FROM Employee where EmployeeID = {employeeID}";
@@ -219,10 +158,13 @@ namespace PayXpert.dao
                 dr = cmd.ExecuteReader();
                 if (dr.HasRows)
                 {
-                    Employee emp = null;
+                    Employee emp = null!;
                     while (dr.Read())
                     {
-                        emp = new Employee((int)dr[0], (string)dr[1], (string)dr[2], DateTime.Parse(dr[3].ToString()), (string)dr[4], (string)dr[5], (string)dr[6], (string)dr[7], (string)dr[8], DateTime.Parse(dr[9].ToString()), DateTime.Parse(dr[10].ToString()));
+                        emp = new Employee((int)dr[0], (string)dr[1], (string)dr[2], DateTime.Parse(dr[3].ToString()), (string)dr[4], (string)dr[5], (string)dr[6], (string)dr[7], (string)dr[8], DateTime.Parse(dr[9].ToString()), dr[10] != "" ? DateTime.Parse(dr[10].ToString()) : null)
+                        {
+
+                        };
                     }
                     emp.CalculateAge();
                 }
@@ -230,19 +172,6 @@ namespace PayXpert.dao
                 {
                     throw new EmployeeNotFoundException("Could not find employee with the specific ID!");
                 }
-            }
-            catch (EmployeeNotFoundException enfex)
-            {
-                Console.WriteLine(enfex.Message);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            finally
-            {
-                dr.Close();
-                conn.Close();
             }
         }
     }

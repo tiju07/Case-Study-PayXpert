@@ -13,17 +13,16 @@ namespace PayXpert.dao
 {
     public class FinancialRecordService : IFinancialRecordService
     {
+        SqlConnection conn = null!;
         public void AddFinancialRecord(int employeeId, int recordDate, string description, double amount, string recordType)
         {
-            SqlConnection conn = null!;
-            try
+            using (conn = DBConnUtil.ReturnConnectionObject())
             {
-                conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
 
                 //bool validationResul;
-                
+
                 ValidationService.AddFinancialRecordValidation(recordDate, description, amount, recordType);
 
                 DatabaseContext.GetDataFromDB($"SELECT * FROM Employee WHERE EmployeeID = {employeeId}", conn, "", false);
@@ -41,63 +40,40 @@ namespace PayXpert.dao
                 if (rowsAffected > 0) { Console.WriteLine("Record added successfully!"); }
                 else { throw new FinancialRecordException("Error adding record!!"); }
             }
-            catch (FinancialRecordException frex) { Console.WriteLine(frex.Message); }
-            catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.ToString()); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); }
-            finally { conn.Close(); }
         }
 
         public void GetFinancialRecordById(int recordId)
         {
-            SqlConnection conn = null!;
-            try
+            using (conn = DBConnUtil.ReturnConnectionObject())
             {
-                conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
                 string q = $"SELECT * FROM FinancialRecord WHERE RecordID={recordId}";
                 DatabaseContext.GetDataFromDB(q, conn, $"Following are the financial records with ID: {recordId}", true);
             }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message);  }
-            catch (Exception ex) { Console.WriteLine(ex.Message); }
-            finally { conn.Close(); }
         }
 
         public void GetFinancialRecordsForDate(int recordDate)
         {
-            SqlConnection conn = null!;
-            try
+
+            using(conn = DBConnUtil.ReturnConnectionObject())
             {
-                if (recordDate > DateTime.Now.Year) { throw new InvalidInputException("Invalid record date!! Please enter a year less than the current year."); }
-                conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
                 string q = $"SELECT * FROM FinancialRecord WHERE RecordDate={recordDate}";
                 DatabaseContext.GetDataFromDB(q, conn, $"Following are the financial records for the year {recordDate}", true);
             }
-            catch (FinancialRecordException frex) { Console.WriteLine(frex.Message); throw new FinancialRecordException(frex.Message); }
-            catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); }
-            finally { conn.Close(); }
         }
 
         public void GetFinancialRecordsForEmployee(int employeeId)
         {
-            SqlConnection conn = null!;
-            try
+            using(conn = DBConnUtil.ReturnConnectionObject())
             {
-                conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
                 string q = $"SELECT * FROM FinancialRecord WHERE EmployeeID={employeeId}";
                 DatabaseContext.GetDataFromDB(q, conn, $"Following are the financial records for the employee with ID: {employeeId}", true);
             }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (FinancialRecordException frex) { Console.WriteLine(frex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); }
-            finally { conn.Close(); }
         }
     }
 }

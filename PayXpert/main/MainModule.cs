@@ -40,6 +40,9 @@ namespace PayXpert.main
                     "20. Get Financial Records for a specific year\n" +
                     "21. Get a report of all Financial Records\n" +
                     "22. Get Gross Salary of an employee\n" +
+                    "23. Generate Pay Stub of an employee\n" +
+                    "24. Generate Income Statement\n" +
+                    "25. Generate Tax Summary\n" +
                     "0. Exit the menu");
                     Console.Write("\nEnter your choice: ");
                     while (!int.TryParse(Console.ReadLine(), out choice) && (choice <= 0 || choice >= 18))
@@ -62,13 +65,16 @@ namespace PayXpert.main
                                 employeeService.GetEmployeeById(id);
 
                             }
-                            catch (Exception ex) { }
+                            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+                            catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); }
+                            catch (Exception ex) { Console.WriteLine(ex.Message); }
                             break;
                         case 2:
                             try
                             {
                                 employeeService.GetAllEmployees();
                             }
+                            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
                             catch (Exception ex) { Console.WriteLine(ex.Message); }
                             break;
                         case 3:
@@ -236,22 +242,25 @@ namespace PayXpert.main
                                     employeeService.AddEmployee(firstName, lastName, dateOfBirth, gender, email, phoneNumber, address, designation, joiningDate, terminationDate);
                                     break;
                                 }
+                                catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); }
+                                catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); break; }
                                 catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
                         case 4:
                             int employeeID;
-                            while(true)
+                            while (true)
                             {
                                 DateTime? joiningDate;
                                 try
                                 {
                                     Console.WriteLine("\nEnter details to update for the employee(If you do not wish to update a specific information, just type \"-\"):-");
                                     Console.Write("Enter the ID of the employee which needs to be updated: ");
-                                    while (int.TryParse(Console.ReadLine(), out employeeID) && !ValidationService.EmployeeIDIsValid(employeeID))
+                                    while (!int.TryParse(Console.ReadLine(), out employeeID))
                                     {
                                         throw new InvalidInputException("Invalid ID! Please recheck and try again.");
                                     }
+                                    ValidationService.EmployeeIDIsValid(employeeID);
                                     while (true)
                                     {
                                         try
@@ -280,7 +289,7 @@ namespace PayXpert.main
                                         catch (Exception ex) { Console.WriteLine(ex.Message); }
                                     }
                                     dateOfBirth = DateTime.MaxValue;
-                                    while(true)
+                                    while (true)
                                     {
                                         Console.Write("\nEnter Date of Birth of the employee in \"YYYY-MM-DD\" format, \"-\" if no update is required: ");
                                         string temp = Console.ReadLine();
@@ -334,7 +343,7 @@ namespace PayXpert.main
                                         {
                                             Console.Write("\nEnter phone number of the employee: ");
                                             phoneNumber = Console.ReadLine();
-                                            if (phoneNumber == "-") {  phoneNumber = null; break; }
+                                            if (phoneNumber == "-") { phoneNumber = null; break; }
                                             if (!Regex.IsMatch(phoneNumber, "\\+([0-9]{12,})")) { throw new InvalidInputException("Invalid Phone Number!"); }
                                             break;
                                         }
@@ -347,7 +356,7 @@ namespace PayXpert.main
                                         {
                                             Console.Write("\nEnter address of the employee: ");
                                             address = Console.ReadLine();
-                                            if (address == "-") {  address = null; break; }
+                                            if (address == "-") { address = null; break; }
                                             if (address.Length < 3) { throw new InvalidInputException("Invalid Address!"); }
                                             break;
                                         }
@@ -360,7 +369,7 @@ namespace PayXpert.main
                                         {
                                             Console.Write("\nEnter designation of the employee: ");
                                             designation = Console.ReadLine();
-                                            if (designation == "-") {  designation = null; break; }
+                                            if (designation == "-") { designation = null; break; }
                                             if (designation.Length < 2) { throw new InvalidInputException("Invalid First Name!"); }
                                             break;
                                         }
@@ -368,7 +377,7 @@ namespace PayXpert.main
                                         catch (Exception ex) { Console.WriteLine(ex.Message); }
                                     }
                                     joiningDate = null;
-                                    while(true)
+                                    while (true)
                                     {
                                         Console.Write("\nEnter Joining Date of the employee in \"YYYY-MM-DD\" format, \"-\" if no update is required: ");
                                         string temp = Console.ReadLine();
@@ -422,11 +431,14 @@ namespace PayXpert.main
                                     employeeService.UpdateEmployee(employeeID, firstName, lastName, dateOfBirth, gender, email, phoneNumber, address, designation, joiningDate, terminationDate);
                                     break;
                                 }
-                                catch (Exception ex) {  }
+                                catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); }
+                                catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+                                catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); }
+                                catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
                         case 5:
-                            while(true)
+                            while (true)
                             {
                                 try
                                 {
@@ -437,35 +449,39 @@ namespace PayXpert.main
                                     }
                                     employeeService.CalculateAge(employeeID);
                                     break;
-                                }catch(InvalidDataException idex) { Console.WriteLine(idex.Message); }
-                                catch (Exception ex) { Console.WriteLine(ex.Message);  }
+                                }
+                                catch (InvalidDataException idex) { Console.WriteLine(idex.Message); }
+                                catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
                         case 6:
-                            while(true)
+                            while (true)
                             {
-                                
+
                                 try
                                 {
                                     Console.Write("\nEnter ID of employee to delete: ");
                                     if (!int.TryParse(Console.ReadLine(), out employeeID)) throw new InvalidInputException("Invalid Input! Try again.");
                                     employeeService.RemoveEmployee(employeeID);
                                     break;
-                                }catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); }
-                                catch (Exception ex) { }
+                                }
+                                catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); }
+                                catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+                                catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message);}
+                                catch (Exception ex){ Console.WriteLine(ex.Message);}
                             }
                             break;
                         case 7:
                             DateTime startDate = DateTime.MinValue;
                             DateTime endDate = DateTime.MaxValue;
-                            while(true)
+                            while (true)
                             {
                                 try
                                 {
                                     Console.Write("\nEnter ID of employee whose payroll is to be generated: ");
                                     if (!int.TryParse(Console.ReadLine(), out employeeID)) throw new Exception("Invalid Input! Try again.");
                                     ValidationService.EmployeeIDIsValid(employeeID);
-                                    while(true)
+                                    while (true)
                                     {
                                         Console.Write("\nEnter Start Date to generate payroll from (in \"YYYY-MM-DD\" format): ");
                                         try
@@ -482,7 +498,7 @@ namespace PayXpert.main
                                             Console.Write("\nThe entered data was in wrong format. Please retry by entering data in correct format(YYYY-MM-DD)");
                                         }
                                     }
-                                    while(true)
+                                    while (true)
                                     {
                                         Console.Write("\nEnter End Date to generate payroll from (in \"YYYY-MM-DD\" format): ");
                                         try
@@ -500,32 +516,35 @@ namespace PayXpert.main
                                         }
                                     }
                                     List<decimal> lst = payrollService.GeneratePayroll(employeeID, startDate, endDate);
-                                    if(lst.Count == 0) { throw new PayrollGenerationException("Could not generate payroll for the given details! No data found!"); }
+                                    if (lst.Count == 0) { throw new PayrollGenerationException("Could not generate payroll for the given details! No data found!"); }
                                     Console.WriteLine($"Basic Pay: {lst[0]}\nOvertime Pay: {lst[1]}\nDeductions : {lst[2]}\nNet Salary: {lst[3]}");
                                     break;
-                                }catch (EmployeeNotFoundException enfex) { }
+                                }
+                                catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); }
                                 catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); break; }
-                                catch (Exception ex) { Console.WriteLine(ex.Message);  }
+                                catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
                         case 8:
                             int payrollID;
-                            
-                            while(true)
+                            while (true)
                             {
                                 try
                                 {
                                     Console.Write("\nEnter ID of the specific payroll: ");
-                                    if (!int.TryParse(Console.ReadLine(), out payrollID)) throw new Exception("Invalid Input! Try again.");
+                                    if (!int.TryParse(Console.ReadLine(), out payrollID)) throw new InvalidInputException("Invalid Input! Try again.");
                                     payrollService.GetPayrollById(payrollID);
                                     break;
                                 }
-                                catch (Exception ex) { Console.WriteLine(ex.Message);  }
+                                catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); }
+                                catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+                                catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); }
+                                catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
                         case 9:
-                            
-                            while(true)
+
+                            while (true)
                             {
                                 try
                                 {
@@ -534,7 +553,10 @@ namespace PayXpert.main
                                     ValidationService.EmployeeIDIsValid(employeeID);
                                     payrollService.GetPayrollsForEmployee(employeeID);
                                     break;
-                                }catch (EmployeeNotFoundException enfex) { }
+                                }
+                                catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+                                catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); }
+                                catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); }
                                 catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); }
                                 catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
@@ -542,11 +564,11 @@ namespace PayXpert.main
                         case 10:
                             startDate = DateTime.MinValue;
                             endDate = DateTime.MaxValue;
-                            while(true)
+                            while (true)
                             {
                                 try
                                 {
-                                    while(true)
+                                    while (true)
                                     {
                                         Console.Write("\nEnter Start Date to generate payroll from (in \"YYYY-MM-DD\" format): ");
                                         try
@@ -563,8 +585,8 @@ namespace PayXpert.main
                                             Console.Write("\nThe entered data was in wrong format. Please retry by entering data in correct format(YYYY-MM-DD)");
                                         }
                                     }
-                                    
-                                    while(true)
+
+                                    while (true)
                                     {
                                         Console.Write("\nEnter End Date to generate payroll from (in \"YYYY-MM-DD\" format): ");
                                         try
@@ -584,6 +606,8 @@ namespace PayXpert.main
                                     payrollService.GetPayrollsForPeriod(startDate, endDate);
                                     break;
                                 }
+                                catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+                                catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); }
                                 catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
@@ -591,11 +615,13 @@ namespace PayXpert.main
                             try
                             {
                                 ReportGenerator.GeneratePayrollReport();
-                            }catch (Exception ex) { Console.WriteLine(ex.Message); }
+                            }
+                            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); }
+                            catch (Exception ex) { Console.WriteLine(ex.Message); }
                             break;
                         case 12:
                             int year;
-                            while(true)
+                            while (true)
                             {
 
                                 try
@@ -615,15 +641,18 @@ namespace PayXpert.main
                                     }
                                     taxService.CalculateTax(employeeID, year);
                                     break;
-                                }catch (EmployeeNotFoundException enfex) { }
+                                }
+                                catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); }
+                                catch (TaxCalculationException tcex) { Console.WriteLine(tcex.Message); }
+                                catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+                                catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); }
                                 catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
                         case 13:
                             int taxID;
-                            while(true)
+                            while (true)
                             {
-                                
                                 try
                                 {
                                     Console.Write("\nEnter the ID to get tax details of: ");
@@ -635,13 +664,15 @@ namespace PayXpert.main
                                     taxService.GetTaxById(taxID);
                                     break;
                                 }
-                                catch (Exception ex) {  }
+                                catch (TaxCalculationException tcex) { Console.WriteLine(tcex.Message); }
+                                catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+                                catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
                         case 14:
-                            while(true)
+                            while (true)
                             {
-                                
+
                                 try
                                 {
                                     Console.Write("\nEnter the ID of the employee to get tax details of: ");
@@ -653,14 +684,17 @@ namespace PayXpert.main
                                     ValidationService.EmployeeIDIsValid(employeeID);
                                     taxService.GetTaxesForEmployee(employeeID);
                                     break;
-                                }catch (EmployeeNotFoundException enfex) { }
-                                catch (Exception ex) {  }
+                                }
+                                catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); }
+                                catch (TaxCalculationException tcex) { Console.WriteLine(tcex.Message); }
+                                catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+                                catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
                         case 15:
-                            while(true)
+                            while (true)
                             {
-                                
+
                                 try
                                 {
                                     Console.Write("\nEnter the year to get tax details of: ");
@@ -672,8 +706,9 @@ namespace PayXpert.main
                                     taxService.GetTaxesForYear(year);
                                     break;
                                 }
-                                catch (TaxCalculationException tcex) { break; }
-                                catch (Exception ex) {  }
+                                catch (TaxCalculationException tcex) { Console.WriteLine(tcex.Message); }
+                                catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+                                catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
                         case 16:
@@ -681,6 +716,7 @@ namespace PayXpert.main
                             {
                                 ReportGenerator.GenerateTaxReport();
                             }
+                            catch (TaxCalculationException tcex) { Console.WriteLine(tcex.Message); }
                             catch (Exception ex) { Console.WriteLine(ex.Message); }
                             break;
                         case 17:
@@ -688,9 +724,9 @@ namespace PayXpert.main
                             string description;
                             double amount;
                             string recordType;
-                            while(true)
+                            while (true)
                             {
-                                
+
                                 try
                                 {
                                     Console.Write("\nEnter the ID of the employee: ");
@@ -714,19 +750,30 @@ namespace PayXpert.main
                                         Console.Write("\nWrong entry! This field only accepts numeric inputs.");
                                         Console.Write("\nEnter an Amount for the financial record: ");
                                     }
+                                    List<string> recordTypes = ["expense", "income", "tax payment"];
                                     Console.Write("\nEnter the Type of the record: ");
                                     recordType = Console.ReadLine();
+                                    while (!recordTypes.Contains(recordType.ToLower()))
+                                    {
+                                        Console.WriteLine("Invalid Record Type! Enter one from the following: {\"Expense\", \"Income\", \"Tax Payment\"}");
+                                        Console.Write("\nEnter the type of the record: ");
+                                        recordType = Console.ReadLine();
+                                    }
                                     financialRecordService.AddFinancialRecord(employeeID, recordDate, description, amount, recordType);
                                     break;
-                                }catch (EmployeeNotFoundException enfex) { }
-                                catch (Exception ex) {  }
+                                }
+                                catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); }
+                                catch (FinancialRecordException frex) { Console.WriteLine(frex.Message); }
+                                catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); }
+                                catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.ToString()); }
+                                catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
                         case 18:
                             int recordID;
-                            while(true)
+                            while (true)
                             {
-                                
+
                                 try
                                 {
                                     Console.Write("\nEnter the ID to get financial record details of: ");
@@ -738,13 +785,15 @@ namespace PayXpert.main
                                     financialRecordService.GetFinancialRecordById(recordID);
                                     break;
                                 }
-                                catch (Exception ex) {  }
+                                catch (FinancialRecordException frex) { Console.WriteLine(frex.Message); break; }
+                                catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+                                catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
                         case 19:
-                            while(true)
+                            while (true)
                             {
-                                
+
                                 try
                                 {
                                     Console.Write("\nEnter the ID of the employee to get financial record details of: ");
@@ -756,14 +805,17 @@ namespace PayXpert.main
                                     ValidationService.EmployeeIDIsValid(employeeID);
                                     financialRecordService.GetFinancialRecordsForEmployee(employeeID);
                                     break;
-                                }catch (EmployeeNotFoundException enfex) { }
-                                catch (Exception ex) {  }
+                                }
+                                catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); }
+                                catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+                                catch (FinancialRecordException frex) { Console.WriteLine(frex.Message); }
+                                catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
                         case 20:
-                            while(true)
+                            while (true)
                             {
-                                
+
                                 try
                                 {
                                     Console.Write("\nEnter the year to get financial record details of: ");
@@ -775,8 +827,10 @@ namespace PayXpert.main
                                     financialRecordService.GetFinancialRecordsForDate(year);
                                     break;
                                 }
-                                catch (FinancialRecordException frex) { break; }
-                                catch (Exception ex) {  }
+                                catch (FinancialRecordException frex) { Console.WriteLine(frex.Message); }
+                                catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); }
+                                catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
+                                catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
                         case 21:
@@ -784,12 +838,13 @@ namespace PayXpert.main
                             {
                                 ReportGenerator.GenerateFinancialRecordReport();
                             }
+                            catch (FinancialRecordException frex) { Console.WriteLine(frex.Message); }
                             catch (Exception ex) { Console.WriteLine(ex.Message); }
                             break;
                         case 22:
-                            while(true)
+                            while (true)
                             {
-                                
+
                                 try
                                 {
                                     Console.Write("\nEnter the ID of the employee to calcluate gross salary of: ");
@@ -803,8 +858,39 @@ namespace PayXpert.main
                                     Console.WriteLine($"Gross Salary of Employee with ID {employeeID} is: {grossSalary}");
                                     break;
                                 }
-                                catch (Exception ex) {  }
+                                catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); }
+                                catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); break; }
+                                catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
+                            break;
+                        case 23:
+                            try
+                            {
+                                Console.Write("\nEnter the ID of the employee to generate Pay Stub of: ");
+                                while(!int.TryParse(Console.ReadLine(), out employeeID))
+                                {
+                                    Console.Write("\nInvalid input!");
+                                    Console.Write("\nEnter the ID of the employee to generate Pay Stub of: ");
+                                }
+                                ValidationService.EmployeeIDIsValid(employeeID);
+                                ReportGenerator.PayStubGenerator(employeeID);
+                            }
+                            catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); }
+                            catch (Exception ex) { Console.WriteLine(ex.Message); }
+                            break;
+                        case 24:
+                            try
+                            {
+                                ReportGenerator.IncomeStatementGenerator();
+                            }
+                            catch (Exception ex) { Console.WriteLine(ex.Message); }
+                            break;
+                        case 25:
+                            try
+                            {
+                                ReportGenerator.TaxSummaryGenerator();
+                            }
+                            catch (Exception ex) { Console.WriteLine(ex.Message); }
                             break;
                         case 0:
                             Console.Write("\nExiting...");

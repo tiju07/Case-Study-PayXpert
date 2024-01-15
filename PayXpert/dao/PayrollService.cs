@@ -14,13 +14,14 @@ namespace PayXpert.dao
     public class PayrollService : IPayrollService
     {
         List<decimal> payrollDetails;
+        SqlConnection conn = null!;
+        SqlDataReader reader;
+        SqlCommand cmd;
         public List<decimal> GeneratePayroll(int employeeID, DateTime startDate, DateTime endDate)
         {
             payrollDetails = new List<decimal>();
-            SqlConnection conn = null!;
-            try
+            using (conn = DBConnUtil.ReturnConnectionObject())
             {
-                conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
                 string q = "SELECT BasicSalary, OvertimePay, Deductions, PayPeriodStartDate, PayPeriodEndDate FROM Payroll WHERE EmployeeID = @EmployeeID";
@@ -39,59 +40,38 @@ namespace PayXpert.dao
                     payrollDetails.Add((decimal)dr.GetValue(1));
                     payrollDetails.Add((decimal)dr.GetValue(2));
                     payrollDetails.Add(totPay);
-                    return payrollDetails;
                 }
                 dr.Close();
                 return payrollDetails;
             }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); }
-            finally { conn.Close(); }
-            return payrollDetails;
         }
 
         public void GetPayrollById(int payrollID)
         {
-            SqlConnection conn = null!;
-            try
+            using (conn = DBConnUtil.ReturnConnectionObject())
             {
-                conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
                 string q = $"SELECT * FROM Payroll WHERE PayrollID = {payrollID}";
                 DatabaseContext.GetDataFromDB(q, conn, $"Following are the payroll details for ID: {payrollID}", true);
             }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); }
-            finally { conn.Close(); }
         }
 
         public void GetPayrollsForEmployee(int employeeID)
         {
-            SqlConnection conn = null!;
-            try
+            using (conn = DBConnUtil.ReturnConnectionObject())
             {
-                conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
                 string q = $"SELECT * FROM Payroll WHERE EmployeeID = {employeeID}";
                 DatabaseContext.GetDataFromDB(q, conn, $"Following are the payrolls for the employee with ID: {employeeID}", true);
             }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); }
-            catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); }
-            finally { conn.Close(); }
         }
 
         public void GetPayrollsForPeriod(DateTime startDate, DateTime endDate)
         {
-            SqlConnection conn = null!;
-            try
+            using (conn = DBConnUtil.ReturnConnectionObject())
             {
-                conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
                 string sd = startDate.Year.ToString() + '-' + startDate.Month.ToString() + '-' + startDate.Day.ToString();
@@ -100,37 +80,29 @@ namespace PayXpert.dao
                 string q = $"SELECT * FROM Payroll where PayPeriodStartDate >= \'{sd}\' and PayPeriodEndDate < \'{ed}\'";
                 DatabaseContext.GetDataFromDB(q, conn, $"Following are the payrolls between {sd} and {ed}", true);
             }
-            catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); }
-            finally { conn.Close(); }
         }
 
         public decimal GrossSalaryCalculator(int employeeID)
         {
-            SqlConnection conn = null!;
             SqlCommand cmd;
             SqlDataReader dr = null!;
-            decimal basicPay = 0, overtimePay = 0;
-            try
+            decimal basicPay, overtimePay;
+            using (conn = DBConnUtil.ReturnConnectionObject())
             {
-                conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 string q = $"SELECT BasicSalary, OvertimePay FROM Payroll WHERE EmployeeID = {employeeID}";
                 cmd = new SqlCommand(q, conn);
                 dr = cmd.ExecuteReader();
                 if (!dr.HasRows)
                 {
-                    throw new EmployeeNotFoundException("Could not get payroll details for the specified employee!");
+                    throw new PayrollGenerationException("Could not get payroll details for the specified employee!");
                 }
                 dr.Read();
                 basicPay = (decimal)dr[0];
                 overtimePay = (decimal)dr[1];
+                dr.Close();
+                return (basicPay * 12) + overtimePay;
             }
-            catch (PayrollGenerationException pgex) { Console.WriteLine(pgex.Message); }
-            catch (Exception ex) { Console.WriteLine(ex.Message); }
-            finally { conn.Close(); dr.Close(); }
-            return (basicPay * 12) + overtimePay;
         }
 
         public decimal NetSalaryAfterDeductions(int employeeID)
@@ -138,7 +110,7 @@ namespace PayXpert.dao
             SqlConnection conn = null!;
             SqlCommand cmd;
             SqlDataReader dr = null!;
-            decimal netSalary=0, taxAmount=0;
+            decimal netSalary = 0, taxAmount = 0;
             try
             {
                 conn = DBConnUtil.ReturnConnectionObject();

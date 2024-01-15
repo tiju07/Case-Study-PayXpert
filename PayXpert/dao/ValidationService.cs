@@ -9,7 +9,7 @@ using PayXpert.exception;
 using PayXpert.util;
 using System.Data.SqlClient;
 
-namespace PayXpert.dao 
+namespace PayXpert.dao
 {
 
     internal class ValidationService
@@ -33,12 +33,12 @@ namespace PayXpert.dao
         {
 
             List<string> genders = new List<string>() { "Male", "Female", "Others" };
-            
-            if (!Regex.IsMatch(firstName, "^[a-zA-Z]+$")) { throw new InvalidInputException("Invalid First Name!");}
+
+            if (!Regex.IsMatch(firstName, "^[a-zA-Z]+$")) { throw new InvalidInputException("Invalid First Name!"); }
 
             if (!Regex.IsMatch(lastName, "^[a-zA-Z]+$")) { throw new InvalidInputException("Invalid Last Name!"); }
 
-            if (!genders.Contains(Gender)) { throw new InvalidInputException("Invalid Gender!");}
+            if (!genders.Contains(Gender)) { throw new InvalidInputException("Invalid Gender!"); }
 
             if (!Regex.IsMatch(Email, "^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$")) { throw new InvalidInputException("Invalid Email!"); }
 
@@ -103,18 +103,16 @@ namespace PayXpert.dao
 
             return true;
         }
-    
+
         public static bool EmployeeIDIsValid(int employeeID)
         {
-            try
+            using (SqlConnection conn = DBConnUtil.ReturnConnectionObject())
             {
-                SqlConnection conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
                 string q = $"SELECT * FROM Employee where EmployeeID = {employeeID}";
                 DatabaseContext.GetDataFromDB(q, conn, "", false);
                 return true;
             }
-            catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); throw new EmployeeNotFoundException(enfex.Message); }
         }
     }
 }

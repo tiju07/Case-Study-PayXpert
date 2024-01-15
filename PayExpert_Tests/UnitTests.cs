@@ -17,16 +17,20 @@ namespace PayExpert_Tests
 
         }
 
-        [Test]
-        public void CalculateGrossSalaryForEmployee()
+        [TestCase(1, (double)321125m)]
+        [TestCase(12, (double)787879.0m)]
+        [TestCase(21, (double)604828m)]
+        public void CalculateGrossSalaryForEmployee(int employeeID, double grossSalary)
         {
-            Assert.AreEqual(payrollService.GrossSalaryCalculator(1), 321125m);
+            Assert.AreEqual((double)payrollService.GrossSalaryCalculator(employeeID), grossSalary);
         }
 
-        [Test]
-        public void CalculateNetSalaryAfterDeductions()
+        [TestCase(1, (double)281663m)]
+        [TestCase(12, (double)685174m)]
+        [TestCase(21, (double)610775m)]
+        public void CalculateNetSalaryAfterDeductions(int employeeID, double netSalary)
         {
-            Assert.AreEqual(payrollService.NetSalaryAfterDeductions(1), 281663m);
+            Assert.AreEqual(payrollService.NetSalaryAfterDeductions(employeeID), netSalary);
         }
 
         [TestCase(1, 92233)]
