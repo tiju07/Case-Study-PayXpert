@@ -15,6 +15,11 @@ namespace PayXpert.main
                 TaxService taxService = new TaxService();
                 FinancialRecordService financialRecordService = new FinancialRecordService();
                 int choice = int.MinValue;
+                Console.WriteLine(new String('-', 60));
+                Console.WriteLine(new String('-', 60));
+                Console.WriteLine("Welcome to PayXpert - The Payroll Management System");
+                Console.WriteLine(new String('-', 60));
+                Console.WriteLine(new String('-', 60));
                 do
                 {
                     Console.WriteLine("\nFollowing actions are available:\n" +
@@ -45,7 +50,7 @@ namespace PayXpert.main
                     "25. Generate Tax Summary\n" +
                     "0. Exit the menu");
                     Console.Write("\nEnter your choice: ");
-                    while (!int.TryParse(Console.ReadLine(), out choice) && (choice <= 0 || choice >= 18))
+                    while (!int.TryParse(Console.ReadLine(), out choice) && (choice <= 0 || choice >= 25))
                     {
                         Console.WriteLine("Invalid choice. Try again!");
                         Console.Write("\nEnter your choice: ");

@@ -69,7 +69,7 @@ namespace PayXpert.dao
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
                 string q = $"SELECT * FROM Employee WHERE EmployeeID = {employeeID}";
-                DatabaseContext.GetDataFromDB(q, conn, $"Following is the details of employee with ID: {employeeID}", true);
+                DatabaseContext.GetDataFromDB(q, conn, $"Following are the details of the employee with ID: {employeeID}", true);
             }
         }
 
