@@ -15,8 +15,6 @@ namespace PayXpert.dao
     {
         List<decimal> payrollDetails;
         SqlConnection conn = null!;
-        SqlDataReader reader;
-        SqlCommand cmd;
         public List<decimal> GeneratePayroll(int employeeID, DateTime startDate, DateTime endDate)
         {
             payrollDetails = new List<decimal>();

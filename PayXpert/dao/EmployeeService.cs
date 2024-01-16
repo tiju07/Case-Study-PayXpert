@@ -79,9 +79,9 @@ namespace PayXpert.dao
             {
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
-                string q = $"DELETE FROM Employee where EmployeeID = {employeeID}";
+                string query = $"DELETE FROM Employee where EmployeeID = {employeeID}";
 
-                cmd = new SqlCommand(q, conn);
+                cmd = new SqlCommand(query, conn);
                 int rowsAffected = cmd.ExecuteNonQuery();
                 if (rowsAffected > 0) { Console.WriteLine("Deleted successfully!"); }
                 else if (rowsAffected == 0) { throw new EmployeeNotFoundException("Could not find any employee with the specific ID!"); }

@@ -68,7 +68,6 @@ namespace PayXpert.main
                                     Console.Write("\nEnter the ID of the employee: ");
                                 }
                                 employeeService.GetEmployeeById(id);
-
                             }
                             catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
                             catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); }
@@ -456,6 +455,7 @@ namespace PayXpert.main
                                     break;
                                 }
                                 catch (InvalidDataException idex) { Console.WriteLine(idex.Message); }
+                                catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); break; }
                                 catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
@@ -901,7 +901,7 @@ namespace PayXpert.main
                             Console.Write("\nExiting...");
                             break;
                         default:
-                            Console.Write("\nInvalid choice. Please enter a choice in integer format between 0 and 18.");
+                            Console.Write("\nInvalid choice. Please enter a choice in integer format between 0 and 25.");
                             break;
                     }
                     Thread.Sleep(2000);

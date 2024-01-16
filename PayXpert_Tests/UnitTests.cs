@@ -37,10 +37,10 @@ namespace PayExpert_Tests
         }
 
         [TestCase(1, 92233)]
-        [TestCase(5, 27574.0d)]
-        [TestCase(8, 141977.0d)]
-        [TestCase(9, 45985.0d)]
-        [TestCase(21, 92233.0d)]
+        [TestCase(5, 27574d)]
+        [TestCase(8, 141977d)]
+        [TestCase(9, 45985d)]
+        [TestCase(21, 92233d)]
         public void VerifyTaxCalculationForHighIncomeEmployee(int ID, double expected)
         {
             Assert.AreEqual((double)taxService.GetTaxesForEmployee(ID), expected);
