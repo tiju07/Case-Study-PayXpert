@@ -28,8 +28,8 @@ namespace PayXpert.dao
                 DatabaseContext.GetDataFromDB($"SELECT * FROM Employee WHERE EmployeeID = {employeeId}", conn, "", false);
                 //if (!validationResult) { throw new InvalidInputException("At least one of your inputs was incorrect. Check your data and try again!"); }
 
-                string q = "INSERT INTO FinancialRecord(EmployeeID, RecordDate, Description, Amount, RecordType) VALUES (@EmployeeID, @RecordDate, @Description, @Amount, @RecordType)";
-                SqlCommand cmd = new SqlCommand(q, conn);
+                string query = "INSERT INTO FinancialRecord(EmployeeID, RecordDate, Description, Amount, RecordType) VALUES (@EmployeeID, @RecordDate, @Description, @Amount, @RecordType)";
+                SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@EmployeeID", employeeId);
                 cmd.Parameters.AddWithValue("@RecordDate", recordDate);
                 cmd.Parameters.AddWithValue("@Description", description);
@@ -48,8 +48,8 @@ namespace PayXpert.dao
             {
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
-                string q = $"SELECT * FROM FinancialRecord WHERE RecordID={recordId}";
-                DatabaseContext.GetDataFromDB(q, conn, $"Following are the financial records with ID: {recordId}", true);
+                string query = $"SELECT * FROM FinancialRecord WHERE RecordID={recordId}";
+                DatabaseContext.GetDataFromDB(query, conn, $"Following are the financial records with ID: {recordId}", true);
             }
         }
 
@@ -60,8 +60,8 @@ namespace PayXpert.dao
             {
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
-                string q = $"SELECT * FROM FinancialRecord WHERE RecordDate={recordDate}";
-                DatabaseContext.GetDataFromDB(q, conn, $"Following are the financial records for the year {recordDate}", true);
+                string query = $"SELECT * FROM FinancialRecord WHERE RecordDate={recordDate}";
+                DatabaseContext.GetDataFromDB(query, conn, $"Following are the financial records for the year {recordDate}", true);
             }
         }
 
@@ -71,8 +71,8 @@ namespace PayXpert.dao
             {
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
-                string q = $"SELECT * FROM FinancialRecord WHERE EmployeeID={employeeId}";
-                DatabaseContext.GetDataFromDB(q, conn, $"Following are the financial records for the employee with ID: {employeeId}", true);
+                string query = $"SELECT * FROM FinancialRecord WHERE EmployeeID={employeeId}";
+                DatabaseContext.GetDataFromDB(query, conn, $"Following are the financial records for the employee with ID: {employeeId}", true);
             }
         }
     }

@@ -22,8 +22,8 @@ namespace PayXpert.dao
             {
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
-                string q = "SELECT BasicSalary, OvertimePay, Deductions, PayPeriodStartDate, PayPeriodEndDate FROM Payroll WHERE EmployeeID = @EmployeeID";
-                SqlCommand cmd = new SqlCommand(q, conn);
+                string query = "SELECT BasicSalary, OvertimePay, Deductions, PayPeriodStartDate, PayPeriodEndDate FROM Payroll WHERE EmployeeID = @EmployeeID";
+                SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@EmployeeID", employeeID);
                 SqlDataReader dr = cmd.ExecuteReader();
 
@@ -50,8 +50,8 @@ namespace PayXpert.dao
             {
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
-                string q = $"SELECT * FROM Payroll WHERE PayrollID = {payrollID}";
-                DatabaseContext.GetDataFromDB(q, conn, $"Following are the payroll details for ID: {payrollID}", true);
+                string query = $"SELECT * FROM Payroll WHERE PayrollID = {payrollID}";
+                DatabaseContext.GetDataFromDB(query, conn, $"Following are the payroll details for ID: {payrollID}", true);
             }
         }
 
@@ -61,8 +61,8 @@ namespace PayXpert.dao
             {
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
-                string q = $"SELECT * FROM Payroll WHERE EmployeeID = {employeeID}";
-                DatabaseContext.GetDataFromDB(q, conn, $"Following are the payrolls for the employee with ID: {employeeID}", true);
+                string query = $"SELECT * FROM Payroll WHERE EmployeeID = {employeeID}";
+                DatabaseContext.GetDataFromDB(query, conn, $"Following are the payrolls for the employee with ID: {employeeID}", true);
             }
         }
 
@@ -75,8 +75,8 @@ namespace PayXpert.dao
                 string sd = startDate.Year.ToString() + '-' + startDate.Month.ToString() + '-' + startDate.Day.ToString();
                 string ed = endDate.Year.ToString() + '-' + endDate.Month.ToString() + '-' + endDate.Day.ToString();
 
-                string q = $"SELECT * FROM Payroll where PayPeriodStartDate >= \'{sd}\' and PayPeriodEndDate < \'{ed}\'";
-                DatabaseContext.GetDataFromDB(q, conn, $"Following are the payrolls between {sd} and {ed}", true);
+                string query = $"SELECT * FROM Payroll where PayPeriodStartDate >= \'{sd}\' and PayPeriodEndDate < \'{ed}\'";
+                DatabaseContext.GetDataFromDB(query, conn, $"Following are the payrolls between {sd} and {ed}", true);
             }
         }
 
@@ -88,8 +88,8 @@ namespace PayXpert.dao
             using (conn = DBConnUtil.ReturnConnectionObject())
             {
                 conn.Open();
-                string q = $"SELECT BasicSalary, OvertimePay FROM Payroll WHERE EmployeeID = {employeeID}";
-                cmd = new SqlCommand(q, conn);
+                string query = $"SELECT BasicSalary, OvertimePay FROM Payroll WHERE EmployeeID = {employeeID}";
+                cmd = new SqlCommand(query, conn);
                 dr = cmd.ExecuteReader();
                 if (!dr.HasRows)
                 {
@@ -113,8 +113,8 @@ namespace PayXpert.dao
             {
                 conn = DBConnUtil.ReturnConnectionObject();
                 conn.Open();
-                string q = $"SELECT SUM(NetSalary) NetSalary, SUM(TaxAmount) TaxAmount FROM Payroll P JOIN Tax T ON P.EmployeeID = T.EmployeeID WHERE P.EmployeeID = {employeeID} GROUP BY P.EmployeeID;";
-                cmd = new SqlCommand(q, conn);
+                string query = $"SELECT SUM(NetSalary) NetSalary, SUM(TaxAmount) TaxAmount FROM Payroll P JOIN Tax T ON P.EmployeeID = T.EmployeeID WHERE P.EmployeeID = {employeeID} GROUP BY P.EmployeeID;";
+                cmd = new SqlCommand(query, conn);
                 dr = cmd.ExecuteReader();
                 if (!dr.HasRows)
                 {

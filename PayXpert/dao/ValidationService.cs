@@ -109,8 +109,8 @@ namespace PayXpert.dao
             using (SqlConnection conn = DBConnUtil.ReturnConnectionObject())
             {
                 conn.Open();
-                string q = $"SELECT * FROM Employee where EmployeeID = {employeeID}";
-                DatabaseContext.GetDataFromDB(q, conn, "", false);
+                string query = $"SELECT * FROM Employee where EmployeeID = {employeeID}";
+                DatabaseContext.GetDataFromDB(query, conn, "", false);
                 return true;
             }
         }

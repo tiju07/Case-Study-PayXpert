@@ -24,8 +24,8 @@ namespace PayXpert.dao
                 DatabaseContext.GetDataFromDB($"SELECT * FROM Employee WHERE EmployeeID = {employeeId}", conn, "", false);
                 if (taxYear > DateTime.Now.Year) { throw new InvalidInputException("Invalid year! Enter a year less than or equal to the current year."); }
 
-                string q = $"SELECT TaxAmount FROM Tax WHERE EmployeeID={employeeId} AND TaxYear={taxYear}";
-                SqlCommand cmd = new SqlCommand(q, conn);
+                string query = $"SELECT TaxAmount FROM Tax WHERE EmployeeID={employeeId} AND TaxYear={taxYear}";
+                SqlCommand cmd = new SqlCommand(query, conn);
                 SqlDataReader dr = cmd.ExecuteReader();
                 if (!dr.HasRows) { throw new TaxCalculationException("Could not find any details for the given data!"); }
                 else
@@ -45,8 +45,8 @@ namespace PayXpert.dao
             {
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
-                string q = $"SELECT TaxAmount FROM Tax WHERE TaxID={taxId}";
-                SqlCommand cmd = new SqlCommand(q, conn);
+                string query = $"SELECT TaxAmount FROM Tax WHERE TaxID={taxId}";
+                SqlCommand cmd = new SqlCommand(query, conn);
                 SqlDataReader dr = cmd.ExecuteReader();
                 if (!dr.HasRows) { throw new TaxCalculationException("Could not find tax details for the given ID!"); }
                 while (dr.Read())
@@ -64,9 +64,9 @@ namespace PayXpert.dao
             {
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
-                string q = $"SELECT TaxAmount FROM Tax WHERE EmployeeID={employeeId}";
-                DatabaseContext.GetDataFromDB(q, conn, $"Tax Information for employee with ID: {employeeId}", true);
-                SqlCommand cmd = new SqlCommand(q, conn);
+                string query = $"SELECT TaxAmount FROM Tax WHERE EmployeeID={employeeId}";
+                DatabaseContext.GetDataFromDB(query, conn, $"Tax Information for employee with ID: {employeeId}", true);
+                SqlCommand cmd = new SqlCommand(query, conn);
                 SqlDataReader reader = cmd.ExecuteReader();
                 reader.Read();
                 tax = (decimal)reader[0];
@@ -81,8 +81,8 @@ namespace PayXpert.dao
             {
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
-                string q = $"SELECT * FROM Tax WHERE TaxYear={taxYear}";
-                DatabaseContext.GetDataFromDB(q, conn, $"Tax Information for the year: {taxYear}", true);
+                string query = $"SELECT * FROM Tax WHERE TaxYear={taxYear}";
+                DatabaseContext.GetDataFromDB(query, conn, $"Tax Information for the year: {taxYear}", true);
             }
         }
     }

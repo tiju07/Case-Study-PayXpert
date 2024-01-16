@@ -20,8 +20,8 @@ namespace PayXpert.dao
             using (conn = DBConnUtil.ReturnConnectionObject())
             {
                 conn.Open();
-                string q = "SELECT * FROM Payroll";
-                DatabaseContext.GetDataFromDB(q, conn, "-----------Payroll Report-----------\n", true);
+                string query = "SELECT * FROM Payroll";
+                DatabaseContext.GetDataFromDB(query, conn, "-----------Payroll Report-----------\n", true);
             }
         }
 
@@ -30,8 +30,8 @@ namespace PayXpert.dao
             using(conn = DBConnUtil.ReturnConnectionObject())
             {
                 conn.Open();
-                string q = "SELECT * FROM Tax";
-                DatabaseContext.GetDataFromDB(q, conn, "-----------Tax Report-----------\n", true);
+                string query = "SELECT * FROM Tax";
+                DatabaseContext.GetDataFromDB(query, conn, "-----------Tax Report-----------\n", true);
             }
         }
 
@@ -40,8 +40,8 @@ namespace PayXpert.dao
             using (conn = DBConnUtil.ReturnConnectionObject())
             {
                 conn.Open();
-                string q = "SELECT * FROM FinancialRecord";
-                DatabaseContext.GetDataFromDB(q, conn, "-----------Financial Record Report-----------\n", true);
+                string query = "SELECT * FROM FinancialRecord";
+                DatabaseContext.GetDataFromDB(query, conn, "-----------Financial Record Report-----------\n", true);
             }
         }
 
@@ -50,8 +50,8 @@ namespace PayXpert.dao
             using (conn = DBConnUtil.ReturnConnectionObject())
             {
                 conn.Open();
-                string q = $"select Employee.*, Payroll.*, Tax.TaxAmount from Employee join Payroll on Employee.EmployeeID = Payroll.EmployeeID join Tax on Payroll.EmployeeID = Tax.EmployeeID where Payroll.EmployeeID = {employeeID}";
-                cmd = new SqlCommand(q, conn);
+                string query = $"select Employee.*, Payroll.*, Tax.TaxAmount from Employee join Payroll on Employee.EmployeeID = Payroll.EmployeeID join Tax on Payroll.EmployeeID = Tax.EmployeeID where Payroll.EmployeeID = {employeeID}";
+                cmd = new SqlCommand(query, conn);
                 reader = cmd.ExecuteReader();
                 var columns = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToList();
                 if (!reader.HasRows) { throw new PayrollGenerationException("Error generating Pay Stub for the employee!"); }

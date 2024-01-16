@@ -24,8 +24,8 @@ namespace PayXpert.dao
                 string dob = dateOfBirth.Year.ToString() + "-" + dateOfBirth.Month.ToString() + "-" + dateOfBirth.Day.ToString();
                 string jd = joiningDate.Year.ToString() + "-" + joiningDate.Month.ToString() + "-" + joiningDate.Day.ToString();
 
-                var q = "INSERT INTO Employee values (@FirstName, @LastName, @DateOfBirth, @Gender, @Email, @PhoneNumber, @Address, @Designation, @JoiningDate, @TerminationDate)";
-                cmd = new SqlCommand(q, conn);
+                var query= "INSERT INTO Employee values (@FirstName, @LastName, @DateOfBirth, @Gender, @Email, @PhoneNumber, @Address, @Designation, @JoiningDate, @TerminationDate)";
+                cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@Firstname", firstName);
                 cmd.Parameters.AddWithValue("@LastName", lastName);
@@ -57,8 +57,8 @@ namespace PayXpert.dao
             {
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
-                var q = "SELECT * FROM Employee";
-                DatabaseContext.GetDataFromDB(q, conn, "Following is the list of all employees:", true);
+                var query = "SELECT * FROM Employee";
+                DatabaseContext.GetDataFromDB(query, conn, "Following is the list of all employees:", true);
             }
         }
 
@@ -68,8 +68,8 @@ namespace PayXpert.dao
             {
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) { throw new DatabaseConnectionException("Could not connect to the database!"); }
-                string q = $"SELECT * FROM Employee WHERE EmployeeID = {employeeID}";
-                DatabaseContext.GetDataFromDB(q, conn, $"Following are the details of the employee with ID: {employeeID}", true);
+                string query = $"SELECT * FROM Employee WHERE EmployeeID = {employeeID}";
+                DatabaseContext.GetDataFromDB(query, conn, $"Following are the details of the employee with ID: {employeeID}", true);
             }
         }
 
@@ -110,19 +110,19 @@ namespace PayXpert.dao
                 {
                     jd = joiningDate.Value.Year.ToString() + "-" + joiningDate.Value.Month.ToString() + "-" + joiningDate.Value.Day.ToString();
                 }
-                string q = $"UPDATE Employee SET {(firstName != null ? "FirstName=@FirstName," : "")} {(lastName != null ? "LastName=@LastName," : "")} {(dob != null ? "DateOfBirth=@DOB," : "")} {(gender != null ? "Gender=@Gender," : "")} {(email != null ? "Email=@Email," : "")} {(phoneNumber != null ? "PhoneNumber=@PhoneNumber, " : "")} {(address != null ? "Address=@Address, " : "")}{(designation != null ? "Designation=@Designation," : "")} {(jd != null ? "JoiningDate=@JoiningDate," : "")} {(terminationDate != null ? "TerminationDate=@TerminationDate" : "")} WHERE EmployeeID=@EmployeeID";
-                if (!q.Contains("TerminationDate"))
+                string query = $"UPDATE Employee SET {(firstName != null ? "FirstName=@FirstName," : "")} {(lastName != null ? "LastName=@LastName," : "")} {(dob != null ? "DateOfBirth=@DOB," : "")} {(gender != null ? "Gender=@Gender," : "")} {(email != null ? "Email=@Email," : "")} {(phoneNumber != null ? "PhoneNumber=@PhoneNumber, " : "")} {(address != null ? "Address=@Address, " : "")}{(designation != null ? "Designation=@Designation," : "")} {(jd != null ? "JoiningDate=@JoiningDate," : "")} {(terminationDate != null ? "TerminationDate=@TerminationDate" : "")} WHERE EmployeeID=@EmployeeID";
+                if (!query.Contains("TerminationDate"))
                 {
-                    q = new string(q.ToCharArray().Reverse().ToArray());
-                    int temp = q.IndexOf(',');
-                    q = q.Remove(temp, 1);
-                    q = new string(q.ToCharArray().Reverse().ToArray());
+                    query = new string(query.ToCharArray().Reverse().ToArray());
+                    int temp = query.IndexOf(',');
+                    query = query.Remove(temp, 1);
+                    query = new string(query.ToCharArray().Reverse().ToArray());
                 }
 
                 //To get to know if the employee exists or not in the database before updating it -> throws EmployeeNotFoundException
                 DatabaseContext.GetDataFromDB($"SELECT * FROM Employee WHERE EmployeeID = {employeeID}", conn, "", false);
 
-                cmd = new SqlCommand(q, conn);
+                cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@EmployeeID", employeeID);
                 if (firstName != null) { cmd.Parameters.AddWithValue("@Firstname", firstName); }
@@ -153,8 +153,8 @@ namespace PayXpert.dao
             {
                 conn.Open();
                 if (conn.State != System.Data.ConnectionState.Open) throw new DatabaseConnectionException("Could not connect to the DB!");
-                string q = $"SELECT * FROM Employee where EmployeeID = {employeeID}";
-                cmd = new SqlCommand(q, conn);
+                string query = $"SELECT * FROM Employee where EmployeeID = {employeeID}";
+                cmd = new SqlCommand(query, conn);
                 dr = cmd.ExecuteReader();
                 if (dr.HasRows)
                 {
