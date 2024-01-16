@@ -15,7 +15,6 @@ namespace PayXpert.entity
         private string description = null!;
         private double amount;
         private string recordType = null!;
-        public string newVar;
 
         public int RecordID { get => recordID; private set { } }
         public int EmployeeID { get => employeeID; set { employeeID = value; } }

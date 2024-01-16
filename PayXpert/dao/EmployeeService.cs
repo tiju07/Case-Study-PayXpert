@@ -161,10 +161,7 @@ namespace PayXpert.dao
                     Employee emp = null!;
                     while (dr.Read())
                     {
-                        emp = new Employee((int)dr[0], (string)dr[1], (string)dr[2], DateTime.Parse(dr[3].ToString()), (string)dr[4], (string)dr[5], (string)dr[6], (string)dr[7], (string)dr[8], DateTime.Parse(dr[9].ToString()), dr[10] != "" ? DateTime.Parse(dr[10].ToString()) : null)
-                        {
-
-                        };
+                        emp = new Employee((int)dr[0], (string)dr[1], (string)dr[2], DateTime.Parse(dr[3].ToString()), (string)dr[4], (string)dr[5], (string)dr[6], (string)dr[7], (string)dr[8], DateTime.Parse(dr[9].ToString()), dr[10] == DBNull.Value ? null : DateTime.Parse(dr[10].ToString()));
                     }
                     emp.CalculateAge();
                 }
