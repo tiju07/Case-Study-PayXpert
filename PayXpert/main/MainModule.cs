@@ -472,8 +472,8 @@ namespace PayXpert.main
                                 }
                                 catch (InvalidInputException iiex) { Console.WriteLine(iiex.Message); }
                                 catch (DatabaseConnectionException dbcex) { Console.WriteLine(dbcex.Message); }
-                                catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message);}
-                                catch (Exception ex){ Console.WriteLine(ex.Message);}
+                                catch (EmployeeNotFoundException enfex) { Console.WriteLine(enfex.Message); }
+                                catch (Exception ex) { Console.WriteLine(ex.Message); }
                             }
                             break;
                         case 7:
@@ -742,10 +742,21 @@ namespace PayXpert.main
                                     }
                                     ValidationService.EmployeeIDIsValid(employeeID);
                                     Console.Write("\nEnter the Year of the record: ");
-                                    while (int.TryParse(Console.ReadLine(), out recordDate) && recordDate > DateTime.Now.Year)
+                                    while (true)
                                     {
-                                        Console.Write("\nWrong entry!");
-                                        Console.Write("\nEnter the Year of the record: ");
+                                        if (!int.TryParse(Console.ReadLine(), out recordDate))
+                                        {
+                                            Console.Write("\nWrong entry!");
+                                            Console.Write("\nEnter the Year of the record: ");
+                                            continue;
+                                        }
+                                        if (recordDate > DateTime.Now.Year)
+                                        {
+                                            Console.Write("\nWrong entry!");
+                                            Console.Write("\nEnter the Year of the record: ");
+                                            continue;
+                                        }
+                                        break;
                                     }
                                     Console.Write("\nEnter a Description for the record: ");
                                     description = Console.ReadLine();
@@ -872,7 +883,7 @@ namespace PayXpert.main
                             try
                             {
                                 Console.Write("\nEnter the ID of the employee to generate Pay Stub of: ");
-                                while(!int.TryParse(Console.ReadLine(), out employeeID))
+                                while (!int.TryParse(Console.ReadLine(), out employeeID))
                                 {
                                     Console.Write("\nInvalid input!");
                                     Console.Write("\nEnter the ID of the employee to generate Pay Stub of: ");
