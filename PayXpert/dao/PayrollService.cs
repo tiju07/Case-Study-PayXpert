@@ -29,14 +29,16 @@ namespace PayXpert.dao
 
                 while (dr.Read())
                 {
-                    int payPeriodStartDate = DateTime.Parse(dr.GetValue(3).ToString()).Year;
-                    int payPeriodEndDate = DateTime.Parse(dr.GetValue(4).ToString()).Year;
-                    int months = payPeriodStartDate == payPeriodEndDate ? 1 : (payPeriodEndDate - payPeriodStartDate);
-                    decimal totPay = ((decimal)dr.GetValue(0) * months) + (decimal)dr.GetValue(1) - (decimal)dr.GetValue(2);
+                    int months = (int)endDate.Subtract(startDate).TotalDays / 30;
+                    
+                    decimal basicPay = (decimal)dr.GetValue(0) * months;
+                    decimal overtimePay = ((decimal)dr.GetValue(1)) * (int)Math.Ceiling(months / 12.0);
+                    decimal deductions = ((decimal)dr.GetValue(2)) * (int)Math.Ceiling(months / 12.0);
+                    decimal totPay = basicPay - overtimePay - deductions;
 
-                    payrollDetails.Add((decimal)dr.GetValue(0));
-                    payrollDetails.Add((decimal)dr.GetValue(1));
-                    payrollDetails.Add((decimal)dr.GetValue(2));
+                    payrollDetails.Add(basicPay);
+                    payrollDetails.Add(overtimePay);
+                    payrollDetails.Add(deductions);
                     payrollDetails.Add(totPay);
                 }
                 dr.Close();
