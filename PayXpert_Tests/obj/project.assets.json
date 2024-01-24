@@ -1614,11 +1614,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Asus\\Desktop\\Hexaware Training\\Technical Training\\Assignments\\C# Solutions\\PayExpert-Case-Study\\PayExpert_Tests\\PayXpert_Tests.csproj",
+      "projectUniqueName": "C:\\Users\\Asus\\Desktop\\Hexaware Training\\Technical Training\\Assignments\\C# Solutions\\PayExpert-Case-Study\\PayXpert_Tests\\PayXpert_Tests.csproj",
       "projectName": "PayXpert_Tests",
-      "projectPath": "C:\\Users\\Asus\\Desktop\\Hexaware Training\\Technical Training\\Assignments\\C# Solutions\\PayExpert-Case-Study\\PayExpert_Tests\\PayXpert_Tests.csproj",
+      "projectPath": "C:\\Users\\Asus\\Desktop\\Hexaware Training\\Technical Training\\Assignments\\C# Solutions\\PayExpert-Case-Study\\PayXpert_Tests\\PayXpert_Tests.csproj",
       "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Asus\\Desktop\\Hexaware Training\\Technical Training\\Assignments\\C# Solutions\\PayExpert-Case-Study\\PayExpert_Tests\\obj\\",
+      "outputPath": "C:\\Users\\Asus\\Desktop\\Hexaware Training\\Technical Training\\Assignments\\C# Solutions\\PayExpert-Case-Study\\PayXpert_Tests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config",

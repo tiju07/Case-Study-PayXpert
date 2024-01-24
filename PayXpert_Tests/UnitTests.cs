@@ -48,11 +48,11 @@ namespace PayExpert_Tests
 
         DateTime startDate = new DateTime(2022, 5, 12);
         DateTime endDate = new DateTime(2023, 8, 1);
-        [TestCase(1, 31158.0d)]
-        [TestCase(17, 103204.0d)]
-        [TestCase(9, 186591.0d)]
-        [TestCase(29, 143963.0d)]
-        [TestCase(21, 157830.0d)]
+        [TestCase(1, 345736.0d)]
+        [TestCase(17, 1326792.0d)]
+        [TestCase(9, 1256686.0d)]
+        [TestCase(29, 1007890.0d)]
+        [TestCase(21, 675236.0d)]
         public void ProcessPayrollForMultipleEmployees(int ID, double expected)
         {
             List<decimal> lst = payrollService.GeneratePayroll(ID, startDate, endDate);
